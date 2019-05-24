@@ -2,12 +2,12 @@
   var Nature = {};
   Nature.scene = document.getElementById('canv');
   Nature.camera = Nature.scene.getContext('2d');
-  Nature.entity = 100;
+  Nature.entity = 10;
   Nature.particles = [];
   Nature.time = 0;
   Nature.width = window.innerWidth;
   Nature.height = window.innerHeight;
-  Nature.Fps = 60;
+  Nature.FPS = 60;
 
   var Tool = {};
   Tool.random = function (min, max) {
@@ -21,7 +21,7 @@
       || window.oRequestAnimationFrame
       || window.msRequestAnimationFrame
       || function (callBack) {
-        window.setTimeout(callBack, 1000 / Nature.Fps)
+        window.setTimeout(callBack, 1000 / Nature.FPS)
       }
   })();
 
@@ -33,20 +33,19 @@
     this.x = Math.random() * Nature.width;
     this.y = Math.random() * Nature.height;
     this.r = Tool.random(1, 5);
-    this.alpha = Tool.random(0.3, 1)
+    this.alpha = Tool.random(0.3, 1);
+    this.status = false;
     this.velocity = {
       x: Tool.random(-0.35, 0.35),
       y: Tool.random(0.75, 1.5)
     }
   }
 
-  Particle.prototype.update = function () {
-    Nature.camera.fillStyle = 'rgba(255, 255, 255, ' + this.alpha + ')';
-    Nature.camera.beginPath();
-    Nature.camera.arc(this.x, this.y, this.r, 0, 2 * Math.PI, false);
-    Nature.camera.closePath();
-    Nature.camera.fill();
+  Particle.prototype.update = function (updater) {
+    this.updater = updater;
+    this.updater(Nature.camera);
   }
+
   Particle.prototype.render = function () {
     Nature.time += 0.016;
     this.x += this.velocity.x;
@@ -63,9 +62,42 @@
     for (var i = 0; i < Nature.particles.length; i++) {
       var particle = Nature.particles[i];
       particle.render();
-      particle.update();
+      particle.update(function (camera, pa) {
+        camera.fillStyle = 'rgba(255, 255, 255, ' + pa.alpha + ')';
+        camera.beginPath();
+        camera.arc(pa.x, pa.y, pa.r, 0, 2 * Math.PI, false);
+        camera.closePath();
+        camera.fill();
+      });
     }
     requestAnimationFrame(snowy);
+  }
+
+  var rainy = function () {
+    Nature.camera.clearRect(0, 0, Nature.scene.width, Nature.scene.height);
+    for (var i = 0; i < Nature.particles.length; i++) {
+      var particle = Nature.particles[i];
+      if (particle.status != 'rainy') {
+        particle.velocity.x = 10;
+        particle.velocity.y = 15;
+        particle.increment = Math.floor(Math.random() * 30) + 70;
+        particle.status = 'rainy';
+      }
+      particle.render();
+      particle.update(function (camera) {
+        camera.beginPath();
+        camera.moveTo(this.x, this.y);
+        const t = Math.atan(this.velocity.y / this.velocity.x);
+        const x = Math.cos(t) * this.increment;
+        const y = Math.sin(t) * this.increment;
+        camera.lineTo(this.x + x, this.y + y);
+        camera.lineWidth = 1;
+        camera.strokeStyle = "#fff";
+        camera.stroke();
+        camera.closePath();
+      });
+    }
+    requestAnimationFrame(rainy);
   }
 
   var weatherId;
@@ -87,5 +119,5 @@
   Nature.scene.width = Nature.width;
   Nature.scene.height = Nature.height;
   weather();
-  snowy();
+  rainy();
 })();
