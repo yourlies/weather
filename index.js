@@ -43,7 +43,7 @@
 
   Particle.prototype.update = function (updater) {
     this.updater = updater;
-    this.updater(Nature.camera);
+    this.updater(Nature.camera, this);
   }
 
   Particle.prototype.render = function () {
@@ -62,10 +62,10 @@
     for (var i = 0; i < Nature.particles.length; i++) {
       var particle = Nature.particles[i];
       particle.render();
-      particle.update(function (camera, pa) {
-        camera.fillStyle = 'rgba(255, 255, 255, ' + pa.alpha + ')';
+      particle.update(function (camera) {
+        camera.fillStyle = 'rgba(255, 255, 255, ' + this.alpha + ')';
         camera.beginPath();
-        camera.arc(pa.x, pa.y, pa.r, 0, 2 * Math.PI, false);
+        camera.arc(this.x, this.y, this.r, 0, 2 * Math.PI, false);
         camera.closePath();
         camera.fill();
       });
@@ -87,9 +87,9 @@
       particle.update(function (camera) {
         camera.beginPath();
         camera.moveTo(this.x, this.y);
-        const t = Math.atan(this.velocity.y / this.velocity.x);
-        const x = Math.cos(t) * this.increment;
-        const y = Math.sin(t) * this.increment;
+        var t = Math.atan(this.velocity.y / this.velocity.x);
+        var x = Math.cos(t) * this.increment;
+        var y = Math.sin(t) * this.increment;
         camera.lineTo(this.x + x, this.y + y);
         camera.lineWidth = 1;
         camera.strokeStyle = "#fff";
@@ -119,5 +119,6 @@
   Nature.scene.width = Nature.width;
   Nature.scene.height = Nature.height;
   weather();
-  rainy();
+  // rainy();
+  snowy();
 })();
