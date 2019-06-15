@@ -2,12 +2,13 @@
   var Nature = {};
   Nature.scene = document.getElementById('canv');
   Nature.camera = Nature.scene.getContext('2d');
-  Nature.entity = 10;
+  Nature.entity = 15;
   Nature.particles = [];
   Nature.time = 0;
   Nature.width = window.innerWidth;
   Nature.height = window.innerHeight;
   Nature.FPS = 60;
+  Nature.g = 10;
 
   var Tool = {};
   Tool.random = function (min, max) {
@@ -39,6 +40,7 @@
       x: Tool.random(-0.35, 0.35),
       y: Tool.random(0.75, 1.5)
     }
+    this.chance = 1;
   }
 
   Particle.prototype.update = function (updater) {
@@ -51,8 +53,15 @@
     this.x += this.velocity.x;
     this.y += this.velocity.y;
     if (this.y > Nature.scene.height) {
-      this.x = Math.random() * Nature.scene.width;
-      this.y = 0;
+      var chance = Math.random();
+      if (chance < this.chance) {
+        this.x = Math.random() * Nature.scene.width;
+        this.y = 0;
+      } else {
+        this.x = 0;
+        this.y = Math.random() * Nature.scene.height;
+      }
+      this.status = false;
     }
   }
 
@@ -74,25 +83,32 @@
   }
 
   var rainy = function () {
+    var rainySlope = 1.2;
     Nature.camera.clearRect(0, 0, Nature.scene.width, Nature.scene.height);
     for (var i = 0; i < Nature.particles.length; i++) {
       var particle = Nature.particles[i];
       if (particle.status != 'rainy') {
-        particle.velocity.x = 10;
-        particle.velocity.y = 15;
-        particle.increment = Math.floor(Math.random() * 30) + 70;
+        particle.chance = 0.7;
+        particle.velocity.y = Math.floor(5 + Math.random() * 2);
+        particle.velocity.x = particle.velocity.y * rainySlope;
+        particle.increment = Math.floor(Math.random() * 30) + 90;
         particle.status = 'rainy';
       }
       particle.render();
       particle.update(function (camera) {
         camera.beginPath();
         camera.moveTo(this.x, this.y);
+        this.velocity.y += (1 / 60) * Nature.g;
+        this.velocity.x = this.velocity.y * rainySlope;
         var t = Math.atan(this.velocity.y / this.velocity.x);
         var x = Math.cos(t) * this.increment;
         var y = Math.sin(t) * this.increment;
         camera.lineTo(this.x + x, this.y + y);
+        var rainStyle = camera.createLinearGradient(this.x, this.y, this.x + x, this.y + y);
+        rainStyle.addColorStop(0, '#eee');
+        rainStyle.addColorStop(1, '#ccc');
         camera.lineWidth = 1;
-        camera.strokeStyle = "#fff";
+        camera.strokeStyle = rainStyle;
         camera.stroke();
         camera.closePath();
       });
@@ -119,6 +135,6 @@
   Nature.scene.width = Nature.width;
   Nature.scene.height = Nature.height;
   weather();
-  // rainy();
-  snowy();
+  rainy();
+  // snowy();
 })();
