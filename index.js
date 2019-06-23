@@ -3,7 +3,7 @@
   var Nature = {};
   Nature.scene = document.getElementById('canv');
   Nature.camera = Nature.scene.getContext('2d');
-  Nature.entity = 30;
+  Nature.entity = 20;
   Nature.particles = [];
   Nature.time = 0;
   Nature.width = window.innerWidth;
@@ -136,7 +136,7 @@
             break;
         }
         particle.velocity.x = particle.velocity.y * Nature.leans;
-        particle.alpha = 0.15;
+        particle.alpha = 0.1;
         particle.status = 'rainy';
         particle.back = false;
 
