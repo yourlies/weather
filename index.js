@@ -10,7 +10,7 @@
   Nature.height = window.innerHeight;
   Nature.entity = Math.floor((Nature.width * Nature.height) / 40000);
   Nature.FPS = 60;
-  Nature.g = 10;
+  Nature.g = 7;
   Nature.leans = 0.5;
 
   var Tool = {};
@@ -118,7 +118,7 @@
         } else {
           particle.chance = ((Nature.height * Nature.leans) / Nature.width) * 0.5;
         }
-        particle.velocity.y = Math.floor(13 + Math.random() * 2);
+        particle.velocity.y = Math.floor(8 + Math.random() * 2);
         particle.g = Nature.g;
         var luckyNumber = Math.random();
         switch (true) {
