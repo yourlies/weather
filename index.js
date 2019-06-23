@@ -8,6 +8,7 @@
   Nature.time = 0;
   Nature.width = window.innerWidth;
   Nature.height = window.innerHeight;
+  Nature.entity = Math.floor((Nature.width * Nature.height) / 40000);
   Nature.FPS = 60;
   Nature.g = 10;
   Nature.leans = 0.5;
