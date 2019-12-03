@@ -174,6 +174,13 @@
     }
   }
 
+  var Thunder = function (options) {
+    this.ctx = options.ctx;
+  }
+  Thunder.prototype.updater = function () {
+    
+  }
+
   var weatherId;
   var frame = 0;
   var weather = function () {
@@ -196,6 +203,7 @@
 
   window.$process = window.$process || {};
   $process.Rainy = Rainy;
+  $process.Thunder = Thunder;
   // var rainy = new Rainy();
   // var watcher = function () {
   //   rainy.watcher();

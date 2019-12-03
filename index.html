@@ -26,6 +26,7 @@
   </script>
   <script src="./drop.js"></script>
   <script src="./weather.js"></script>
+  <script src="./thunder.js"></script>
   <script>
     ;(function () {
       var watchers = [];
@@ -41,9 +42,11 @@
         drop.watcher({ x: e.x, y: e.y, forward: 1 });
       }
       var rainy = new $process.Rainy({ recycle: recycle, ctx: ctx });
+      var thunder = new $process.Thunder({ ctx: ctx, width: width, height: height });
 
       watchers.push(drop);
       watchers.push(rainy);
+      watchers.push(thunder);
 
       var raf = function () {
         ctx.clearRect(0, 0, width, height);
