@@ -9,13 +9,17 @@ var Thunder = function (options) {
   this.lights = [];
   this.lightTimeCurrent = 0;
   this.lightTimeTotal = 400;
+
+
+  this.lightning = false;
+  this.probability = 200;
 }
 Thunder.prototype.create= function (x, y, canSpawn) {
   this.lights.push({
     x: x, y: y,
-    xRange: rand(5, 30), yRange: rand(5, 25),
+    xRange: rand(25, 50), yRange: rand(15, 35),
     path: [{ x: x, y: y }],
-    pathLimit: rand(35, 45),
+    pathLimit: rand(25, 35),
     canSpawn: canSpawn,
     hasFired: false
   });
@@ -68,7 +72,7 @@ Thunder.prototype.render = function () {
       }
     }
     if (!light.hasFired) {
-      this.ctx.fillStyle = 'rgba(0, 0, 0, '+ rand(4, 12)/100+')';
+      this.ctx.fillStyle = 'rgba(0, 0, 0, '+ rand(4, 12) / 100+')';
       this.ctx.fillRect(0, 0, this.width, this.height);  
     }
     if (rand(0, 30) == 0) {
@@ -94,6 +98,14 @@ Thunder.prototype.lightTimer = function () {
 Thunder.prototype.updater = function () {
   this.update();
   this.lightTimer();
-  this.render();
+  this.render();``
+}
+Thunder.prototype.cloudFriction = function () {
+  return rand(0, this.probability);
+}
+Thunder.prototype.discharge = function () {
+  var newX = rand(100, this.width / 2);
+  var newY = rand(0, this.height / 10); 
+  this.create(newX, newY, true);
 }
 $process.Thunder = Thunder;
