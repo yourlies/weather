@@ -10,6 +10,7 @@
   }
 
   // Lies weather <thunder>
+  var ThunderID = 0;
   var queue = [];
   var path = function (adjust) {
     return Math.ceil(rand(0, 20)) / 10 + 0.5 + (adjust || 0);
@@ -23,7 +24,7 @@
     var degree = path(context.adjust || 0);
     var length = rand(10, 14);
     return {
-      startX: context.x, startY: context.y,
+      startX: context.x, startY: context.y, id: context.id,
       adjust: context.adjust || 0,
       width: context.width,
       x: x, y: y, degree: degree, width: width, length : length
@@ -31,15 +32,17 @@
   }
   var counter = 0;
   var growth = function (thunder) {
-    var newThunderPath = create(thunder);
-    thunder.leftPush(newThunderPath);
+    var newThunderContext = create(thunder);
+    thunder.leftPush(newThunderContext);
     queue.push(thunder.leftChild);
     if (counter == 5 || counter == 20 || counter == 61) {
-      var newThunderPath = create(thunder);
-      newThunderPath.adjust = counter == 20 ? -1 : 1;
-      newThunderPath.degree = path(counter == 20 ? -1 : 1);
-      newThunderPath.width = 2;
-      thunder.rightPush(newThunderPath);
+      var newThunderContext = create(thunder);
+      ThunderID++;
+      newThunderContext.adjust = counter == 20 ? -1 : 1;
+      newThunderContext.degree = path(counter == 20 ? -1 : 1);
+      newThunderContext.width = 2;
+      newThunderContext.id = ThunderID;
+      thunder.rightPush(newThunderContext);
       queue.push(thunder.rightChild);
     }
   }
@@ -49,6 +52,7 @@
     x: 300, y: 0, width: 2,
     degree: Math.PI / 2,
     length: rand(10, 14),
+    id: 0,
   });
 
   var canv = document.getElementById('canv');
