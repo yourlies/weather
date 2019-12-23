@@ -26,6 +26,7 @@
     return {
       startX: context.x, startY: context.y, id: context.id,
       adjust: context.adjust || 0,
+      count: (context.count || context.count === 0) ? (context.count + 1) : 0,
       width: context.width,
       x: x, y: y, degree: degree, width: width, length : length
     }
@@ -35,12 +36,13 @@
     var newThunderContext = create(thunder);
     thunder.leftPush(newThunderContext);
     queue.push(thunder.leftChild);
-    if (counter == 5 || counter == 20 || counter == 61) {
+    if (thunder.context.id == 0 && thunder.context.count == 5) {
       var newThunderContext = create(thunder);
       ThunderID++;
       newThunderContext.adjust = counter == 20 ? -1 : 1;
       newThunderContext.degree = path(counter == 20 ? -1 : 1);
       newThunderContext.width = 2;
+      newThunderContext.count = 0;
       newThunderContext.id = ThunderID;
       thunder.rightPush(newThunderContext);
       queue.push(thunder.rightChild);
