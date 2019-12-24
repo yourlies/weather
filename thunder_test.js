@@ -64,16 +64,39 @@
     thunder.leftPush(newThunderContext)
     queue.push(thunder.leftChild)
     if (thunder.context.id == 0 && thunder.context.count == 5) {
-      var newThunderContext = create(thunder)
-      ThunderID++
-      newThunderContext.adjust = counter == 20 ? -1 : 1
-      newThunderContext.degree = path(counter == 20 ? -1 : 1)
-      newThunderContext.width = 2
-      newThunderContext.count = 0
-      newThunderContext.id = ThunderID
-      thunder.rightPush(newThunderContext)
-      queue.push(thunder.rightChild)
+      const shape = shaper(thunder)
+      branch(shape)
     }
+    if (thunder.context.id == 0 && thunder.context.count == 30) {
+      const shape = shaper(thunder)
+      branch(shape)
+    }
+    if (thunder.context.id == 0 && thunder.context.count == 15) {
+      const shape = shaper(thunder)
+      branch(shape)
+    }
+  }
+  var shaper = function(thunder) {
+    let adjust
+    if (rand(0, 1) > 0.5) {
+      adjust = thunder.context.adjust + 1
+    } else {
+      adjust = thunder.context.adjust - 1
+    }
+    return { adjust: adjust, thunder: thunder }
+  }
+  var branch = function(shape) {
+    const thunder = shape.thunder
+    const adjust = shape.adjust
+    var newThunderContext = create(thunder)
+    ThunderID++
+    newThunderContext.adjust = adjust
+    newThunderContext.degree = path(adjust)
+    newThunderContext.width = 2
+    newThunderContext.count = 0
+    newThunderContext.id = ThunderID
+    thunder.rightPush(newThunderContext)
+    queue.push(thunder.rightChild)
   }
 
   var thunder = new BiTree({
@@ -101,7 +124,7 @@
     ctx.lineWidth = previous.width
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
     ctx.stroke()
-    console.log(thunder.context.id, thunder.context.count)
+    // console.log(thunder.context.id, thunder.context.count)
     if (counter > 200) {
       cancelAnimationFrame(rafId)
     } else {
