@@ -5,12 +5,9 @@
     }
     var i = t.prototype
     return (
-      (i._context = function(t) {
-        this.context = t
-      }),
       (i._push = function(i) {
-        var n = new t(i)
-        return (n.parent = this), this._context(i), n
+        var h = new t(i)
+        return (h.parent = this), h
       }),
       (i.rightPush = function(t) {
         this.rightChild = this._push(t)
@@ -21,6 +18,7 @@
       t
     )
   })()
+
   var rand = function(min, max) {
     return Math.random() * (max - min) + min
   }
@@ -29,10 +27,19 @@
     var y = length * Math.sin(degree)
     return { x: Math.ceil(x), y: Math.ceil(y) }
   }
+  var gen = function(width, number) {
+    var divid = width / number
+    var res = []
+    for (var i = 0; i < width; i += divid) {
+      res.push(Math.ceil(rand(i, i + divid)))
+    }
+    return res
+  }
 
   // Lies weather <thunder>
   var ThunderID = 0
   var queue = []
+  var trees = []
   var path = function(adjust) {
     return Math.ceil(rand(0, 20)) / 10 + 0.5 + (adjust || 0)
   }
@@ -47,6 +54,7 @@
     return {
       startX: context.x,
       startY: context.y,
+      max: context.max,
       id: context.id,
       adjust: context.adjust || 0,
       count: context.count || context.count === 0 ? context.count + 1 : 0,
@@ -59,43 +67,48 @@
     }
   }
   var counter = 0
+  var number = gen(30, 3)
+  var child = gen(20, 2)
+  console.log(number)
   var growth = function(thunder) {
-    var newThunderContext = create(thunder)
-    thunder.leftPush(newThunderContext)
-    queue.push(thunder.leftChild)
-    if (thunder.context.id == 0 && thunder.context.count == 5) {
-      const shape = shaper(thunder)
+    console.log(thunder.context)
+    if (thunder.context.count < thunder.context.max) {
+      var newThunderContext = create(thunder)
+      thunder.leftPush(newThunderContext)
+      queue.push(thunder.leftChild)
+    }
+    if (thunder.context.id == 0 && number.indexOf(thunder.context.count) !== -1) {
+      const shape = shaper(thunder, 1)
       branch(shape)
     }
-    if (thunder.context.id == 0 && thunder.context.count == 30) {
-      const shape = shaper(thunder)
-      branch(shape)
-    }
-    if (thunder.context.id == 0 && thunder.context.count == 15) {
-      const shape = shaper(thunder)
+    if (thunder.context.id == 1 && child.indexOf(thunder.context.count) !== -1) {
+      const shape = shaper(thunder, 0.5)
       branch(shape)
     }
   }
-  var shaper = function(thunder) {
+  var shaper = function(thunder, pos) {
     let adjust
     if (rand(0, 1) > 0.5) {
-      adjust = thunder.context.adjust + 1
+      adjust = thunder.context.adjust + pos
     } else {
-      adjust = thunder.context.adjust - 1
+      adjust = thunder.context.adjust - pos
     }
-    return { adjust: adjust, thunder: thunder }
+    return { adjust: adjust, thunder: thunder, max: (3 * thunder.context.max) / 4 }
   }
   var branch = function(shape) {
     const thunder = shape.thunder
     const adjust = shape.adjust
+    const max = shape.max
     var newThunderContext = create(thunder)
     ThunderID++
     newThunderContext.adjust = adjust
     newThunderContext.degree = path(adjust)
     newThunderContext.width = 2
     newThunderContext.count = 0
+    newThunderContext.max = max
     newThunderContext.id = ThunderID
     thunder.rightPush(newThunderContext)
+    trees.push(thunder.rightChild)
     queue.push(thunder.rightChild)
   }
 
@@ -105,14 +118,25 @@
     x: 300,
     y: 0,
     width: 2,
+    max: 80,
     degree: Math.PI / 2,
     length: rand(10, 14),
+    count: 0,
     id: 0
   })
+
+  trees.push(thunder)
 
   var canv = document.getElementById('canv')
   var ctx = canv.getContext('2d')
   var rafId
+
+  var read = function(thunder) {
+    console.log(thunder.context.id)
+    if (thunder.leftChild) {
+      read(thunder.leftChild)
+    }
+  }
 
   queue.push(thunder)
   var raf = function() {
@@ -124,9 +148,9 @@
     ctx.lineWidth = previous.width
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
     ctx.stroke()
-    // console.log(thunder.context.id, thunder.context.count)
-    if (counter > 200) {
+    if (counter > 500) {
       cancelAnimationFrame(rafId)
+      read(trees[0])
     } else {
       counter++
       growth(thunder)
