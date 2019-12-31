@@ -69,9 +69,7 @@
   var counter = 0
   var number = gen(30, 3)
   var child = gen(20, 2)
-  console.log(number)
   var growth = function(thunder) {
-    console.log(thunder.context)
     if (thunder.context.count < thunder.context.max) {
       var newThunderContext = create(thunder)
       thunder.leftPush(newThunderContext)
@@ -93,7 +91,7 @@
     } else {
       adjust = thunder.context.adjust - pos
     }
-    return { adjust: adjust, thunder: thunder, max: (3 * thunder.context.max) / 4 }
+    return { adjust: adjust, thunder: thunder, max: (1 * thunder.context.max) / 2 }
   }
   var branch = function(shape) {
     const thunder = shape.thunder
@@ -113,9 +111,9 @@
   }
 
   var thunder = new BiTree({
-    startX: 300,
+    startX: 400,
     startY: 0,
-    x: 300,
+    x: 400,
     y: 0,
     width: 2,
     max: 80,
@@ -128,6 +126,8 @@
   trees.push(thunder)
 
   var canv = document.getElementById('canv')
+  canv.width = window.innerWidth
+  canv.height = window.innerHeight
   var ctx = canv.getContext('2d')
   var rafId
 
@@ -137,10 +137,7 @@
       read(thunder.leftChild)
     }
   }
-
-  queue.push(thunder)
-  var raf = function() {
-    var thunder = queue.shift()
+  var render = function(thunder) {
     var previous = thunder.context
     ctx.beginPath()
     ctx.moveTo(previous.startX, previous.startY)
@@ -148,9 +145,14 @@
     ctx.lineWidth = previous.width
     ctx.fillStyle = 'rgba(0, 0, 0, 1)'
     ctx.stroke()
-    if (counter > 500) {
+  }
+
+  queue.push(thunder)
+  var raf = function() {
+    var thunder = queue.shift()
+    render(thunder)
+    if (counter > 300) {
       cancelAnimationFrame(rafId)
-      read(trees[0])
     } else {
       counter++
       growth(thunder)
