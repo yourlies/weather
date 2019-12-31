@@ -63,7 +63,8 @@
       y: y,
       degree: degree,
       width: width,
-      length: length
+      length: length,
+      opacity: 1
     }
   }
   var counter = 0
@@ -76,7 +77,7 @@
       queue.push(thunder.leftChild)
     }
     if (thunder.context.id == 0 && number.indexOf(thunder.context.count) !== -1) {
-      const shape = shaper(thunder, 1)
+      const shape = shaper(thunder, 0.7)
       branch(shape)
     }
     if (thunder.context.id == 1 && child.indexOf(thunder.context.count) !== -1) {
@@ -120,6 +121,7 @@
     degree: Math.PI / 2,
     length: rand(10, 14),
     count: 0,
+    opacity: 1,
     id: 0
   })
 
@@ -131,31 +133,68 @@
   var ctx = canv.getContext('2d')
   var rafId
 
-  var read = function(thunder) {
-    console.log(thunder.context.id)
-    if (thunder.leftChild) {
-      read(thunder.leftChild)
-    }
-  }
   var render = function(thunder) {
     var previous = thunder.context
     ctx.beginPath()
     ctx.moveTo(previous.startX, previous.startY)
     ctx.lineTo(previous.x, previous.y)
     ctx.lineWidth = previous.width
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)'
+    ctx.strokeStyle = `rgba(0, 0, 0, ${previous.opacity})`
     ctx.stroke()
   }
 
   queue.push(thunder)
+  var num = 0
+  for (var i = 0; i < 240; i++) {
+    growth(queue[num])
+    num++
+  }
+  var read = function(thunder, index) {
+    if (index > counter) {
+      return false
+    }
+    if (thunder.leftChild) {
+      render(thunder)
+      read(thunder.leftChild, index + 1)
+    }
+  }
+  var historyQueue = []
+  var thunderQueue = []
+  thunderQueue.push(queue[0])
   var raf = function() {
-    var thunder = queue.shift()
-    render(thunder)
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
+    var length = thunderQueue.length
+    // for (var i = 0; i < historyQueue.length; i++) {
+    //   if (historyQueue[i]) {
+    //     historyQueue[i].context.opacity -= 0.1
+    //     if (historyQueue[i].context.opacity < 0.05) {
+    //       historyQueue[i].context.opacity = 0.05
+    //     }
+    //     render(historyQueue[i])
+    //   }
+    // }
+    read(queue[0], 0)
+    for (var i = 0; i < length; i++) {
+      var thunderCurrent = thunderQueue.shift()
+      historyQueue.push(thunderCurrent)
+      if (!thunderCurrent) {
+        break
+      }
+      render(thunderCurrent)
+      thunderCurrent = thunderCurrent.leftChild
+      thunderQueue.push(thunderCurrent)
+      if (!thunderCurrent) {
+        break
+      }
+      while (thunderCurrent.rightChild) {
+        thunderCurrent = thunderCurrent.rightChild
+        thunderQueue.push(thunderCurrent)
+      }
+    }
     if (counter > 300) {
       cancelAnimationFrame(rafId)
     } else {
       counter++
-      growth(thunder)
       rafId = requestAnimationFrame(raf)
     }
   }
