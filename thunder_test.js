@@ -1,33 +1,38 @@
-;(function() {
-  var BiTree = (function() {
+;
+(function () {
+  var BiTree = (function () {
     function t(t) {
-      ;(this.rightChild = null), (this.leftChild = null), (this.parent = null), (this.context = null), (this.context = t)
+      ;
+      (this.rightChild = null), (this.leftChild = null), (this.parent = null), (this.context = null), (this.context = t)
     }
     var i = t.prototype
     return (
-      (i._push = function(i) {
+      (i._push = function (i) {
         var h = new t(i)
         return (h.parent = this), h
       }),
-      (i.rightPush = function(t) {
+      (i.rightPush = function (t) {
         this.rightChild = this._push(t)
       }),
-      (i.leftPush = function(t) {
+      (i.leftPush = function (t) {
         this.leftChild = this._push(t)
       }),
       t
     )
   })()
 
-  var rand = function(min, max) {
+  var rand = function (min, max) {
     return Math.random() * (max - min) + min
   }
-  var polar = function(degree, length) {
+  var polar = function (degree, length) {
     var x = length * Math.cos(degree)
     var y = length * Math.sin(degree)
-    return { x: Math.ceil(x), y: Math.ceil(y) }
+    return {
+      x: Math.ceil(x),
+      y: Math.ceil(y)
+    }
   }
-  var gen = function(width, number) {
+  var gen = function (width, number) {
     var divid = width / number
     var res = []
     for (var i = 0; i < width; i += divid) {
@@ -39,11 +44,11 @@
   // Lies weather <thunder>
   var ThunderID = 0
   var queue = []
-  var trees = []
-  var path = function(adjust) {
+  var branches = []
+  var path = function (adjust) {
     return Math.ceil(rand(0, 20)) / 10 + 0.5 + (adjust || 0)
   }
-  var create = function(thunder) {
+  var create = function (thunder) {
     var context = thunder.context
     var p = polar(context.degree, context.length)
     var x = p.x + context.x
@@ -70,7 +75,7 @@
   var counter = 0
   var number = gen(30, 3)
   var child = gen(20, 2)
-  var growth = function(thunder) {
+  var growth = function (thunder) {
     if (thunder.context.count < thunder.context.max) {
       var newThunderContext = create(thunder)
       thunder.leftPush(newThunderContext)
@@ -85,16 +90,20 @@
       branch(shape)
     }
   }
-  var shaper = function(thunder, pos) {
+  var shaper = function (thunder, pos) {
     let adjust
     if (rand(0, 1) > 0.5) {
       adjust = thunder.context.adjust + pos
     } else {
       adjust = thunder.context.adjust - pos
     }
-    return { adjust: adjust, thunder: thunder, max: (1 * thunder.context.max) / 2 }
+    return {
+      adjust: adjust,
+      thunder: thunder,
+      max: (1 * thunder.context.max) / 2
+    }
   }
-  var branch = function(shape) {
+  var branch = function (shape) {
     const thunder = shape.thunder
     const adjust = shape.adjust
     const max = shape.max
@@ -107,8 +116,28 @@
     newThunderContext.max = max
     newThunderContext.id = ThunderID
     thunder.rightPush(newThunderContext)
-    trees.push(thunder.rightChild)
+    branches.push(thunder.rightChild)
     queue.push(thunder.rightChild)
+  }
+
+  var render = function (thunder) {
+    var previous = thunder.context
+    ctx.beginPath()
+    ctx.moveTo(previous.startX, previous.startY)
+    ctx.lineTo(previous.x, previous.y)
+    ctx.lineWidth = previous.width
+    ctx.strokeStyle = `rgba(0, 0, 0, ${previous.opacity})`
+    ctx.stroke()
+  }
+
+  var renderBranch = function (thunder, index) {
+    if (index > counter) {
+      return false
+    }
+    if (thunder.leftChild) {
+      render(thunder)
+      renderBranch(thunder.leftChild, index + 1)
+    }
   }
 
   var thunder = new BiTree({
@@ -124,8 +153,7 @@
     opacity: 1,
     id: 0
   })
-
-  trees.push(thunder)
+  branches.push(thunder)
 
   var canv = document.getElementById('canv')
   canv.width = window.innerWidth
@@ -133,65 +161,48 @@
   var ctx = canv.getContext('2d')
   var rafId
 
-  var render = function(thunder) {
-    var previous = thunder.context
-    ctx.beginPath()
-    ctx.moveTo(previous.startX, previous.startY)
-    ctx.lineTo(previous.x, previous.y)
-    ctx.lineWidth = previous.width
-    ctx.strokeStyle = `rgba(0, 0, 0, ${previous.opacity})`
-    ctx.stroke()
-  }
-
   queue.push(thunder)
   var num = 0
   for (var i = 0; i < 240; i++) {
     growth(queue[num])
     num++
   }
-  var read = function(thunder, index) {
-    if (index > counter) {
-      return false
-    }
-    if (thunder.leftChild) {
-      render(thunder)
-      read(thunder.leftChild, index + 1)
-    }
-  }
+
   var historyQueue = []
   var thunderQueue = []
+  var bufferQueue = []
   thunderQueue.push(queue[0])
-  var raf = function() {
+
+
+  var raf = function () {
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
     var length = thunderQueue.length
-    // for (var i = 0; i < historyQueue.length; i++) {
-    //   if (historyQueue[i]) {
-    //     historyQueue[i].context.opacity -= 0.1
-    //     if (historyQueue[i].context.opacity < 0.05) {
-    //       historyQueue[i].context.opacity = 0.05
-    //     }
-    //     render(historyQueue[i])
-    //   }
-    // }
-    read(queue[0], 0)
+
+    renderBranch(branches[0], 0)
     for (var i = 0; i < length; i++) {
+      // 一条分支的闪电头部
       var thunderCurrent = thunderQueue.shift()
-      historyQueue.push(thunderCurrent)
-      if (!thunderCurrent) {
-        break
-      }
       render(thunderCurrent)
+      // 一个时刻的闪电渲染完毕推入历史队列
+      historyQueue.push(thunderCurrent)
+      // 准备渲染该分支闪电的子节点
       thunderCurrent = thunderCurrent.leftChild
-      thunderQueue.push(thunderCurrent)
       if (!thunderCurrent) {
         break
       }
+      // 更新该分支的闪电头部为子节点
+      thunderQueue.push(thunderCurrent)
+      // 如果该分支有兄弟分支，则依次推入临时队列
       while (thunderCurrent.rightChild) {
         thunderCurrent = thunderCurrent.rightChild
-        thunderQueue.push(thunderCurrent)
+        bufferQueue.push(thunderCurrent)
       }
     }
-    if (counter > 300) {
+    for (var i = 0; i < bufferQueue.length; i++) {
+      thunderQueue.push(bufferQueue[i])
+    }
+    bufferQueue = []
+    if (counter > 100) {
       cancelAnimationFrame(rafId)
     } else {
       counter++

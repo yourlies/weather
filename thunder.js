@@ -1,8 +1,8 @@
-var rand = function(min, max) {
+var rand = function (min, max) {
   return ~~(Math.random() * (max - min + 1) + min)
 }
 
-var Thunder = function(options) {
+var Thunder = function (options) {
   this.ctx = options.ctx
   this.width = options.width
   this.height = options.height
@@ -13,19 +13,22 @@ var Thunder = function(options) {
   this.lightning = false
   this.probability = 200
 }
-Thunder.prototype.create = function(x, y, canSpawn) {
+Thunder.prototype.create = function (x, y, canSpawn) {
   this.lights.push({
     x: x,
     y: y,
     xRange: rand(25, 50),
     yRange: rand(15, 35),
-    path: [{ x: x, y: y }],
+    path: [{
+      x: x,
+      y: y
+    }],
     pathLimit: rand(25, 35),
     canSpawn: canSpawn,
     hasFired: false
   })
 }
-Thunder.prototype.update = function() {
+Thunder.prototype.update = function () {
   var i = this.lights.length
   while (i--) {
     var light = this.lights[i]
@@ -39,7 +42,7 @@ Thunder.prototype.update = function() {
     light.hasFired = true
   }
 }
-Thunder.prototype.render = function() {
+Thunder.prototype.render = function () {
   var i = this.lights.length
   while (i--) {
     var light = this.lights[i]
@@ -83,7 +86,7 @@ Thunder.prototype.render = function() {
     this.ctx.stroke()
   }
 }
-Thunder.prototype.lightTimer = function() {
+Thunder.prototype.lightTimer = function () {
   this.lightTimeCurrent++
   if (this.lightTimeCurrent >= this.lightTimeTotal) {
     var newX = rand(100, this.width / 2)
@@ -96,15 +99,15 @@ Thunder.prototype.lightTimer = function() {
     this.lightTimeTotal = rand(300, 400)
   }
 }
-Thunder.prototype.updater = function() {
+Thunder.prototype.updater = function () {
   this.update()
   this.lightTimer()
   this.render()
 }
-Thunder.prototype.cloudFriction = function() {
+Thunder.prototype.cloudFriction = function () {
   return rand(0, this.probability)
 }
-Thunder.prototype.discharge = function() {
+Thunder.prototype.discharge = function () {
   var newX = rand(100, this.width / 2)
   var newY = rand(0, this.height / 10)
   this.create(newX, newY, true)
