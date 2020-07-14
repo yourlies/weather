@@ -1,9 +1,7 @@
-;
-(function () {
+;(function () {
   var BiTree = (function () {
     function t(t) {
-      ;
-      (this.rightChild = null), (this.leftChild = null), (this.parent = null), (this.context = null), (this.context = t)
+      ;(this.rightChild = null), (this.leftChild = null), (this.parent = null), (this.context = null), (this.context = t)
     }
     var i = t.prototype
     return (
@@ -29,7 +27,7 @@
     var y = length * Math.sin(degree)
     return {
       x: Math.ceil(x),
-      y: Math.ceil(y)
+      y: Math.ceil(y),
     }
   }
   var gen = function (width, number) {
@@ -69,7 +67,7 @@
       degree: degree,
       width: width,
       length: length,
-      opacity: 1
+      opacity: 1,
     }
   }
   var counter = 0
@@ -100,7 +98,7 @@
     return {
       adjust: adjust,
       thunder: thunder,
-      max: (1 * thunder.context.max) / 2
+      max: (1 * thunder.context.max) / 2,
     }
   }
   var branch = function (shape) {
@@ -151,7 +149,7 @@
     length: rand(10, 14),
     count: 0,
     opacity: 1,
-    id: 0
+    id: 0,
   })
   branches.push(thunder)
 
@@ -173,9 +171,8 @@
   var bufferQueue = []
   thunderQueue.push(queue[0])
 
-
   var raf = function () {
-    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
+    // ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
     var length = thunderQueue.length
 
     renderBranch(branches[0], 0)
