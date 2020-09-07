@@ -1,4 +1,4 @@
-;(function () {
+; (function () {
   var getRgb = function (r, g, b) {
     return 'rgb(' + r + ',' + g + ',' + b + ')';
   }
@@ -6,11 +6,11 @@
     this.options = options || {};
     this.gravity = this.options.gravity || 0.5;
     this.canv = this.options.canv;
-    this.ctx = this.options.ctx;
+    this.ctx = this.options.canv.getContext('2d');
     this.drops = [];
   };
   Drop.prototype.update = function () {
-    var _this =  this;
+    var _this = this;
     if (this.drops.length > 0) {
       this.drops.forEach(function (drop) {
         drop.posx = drop.posx + drop.vx;
@@ -50,7 +50,7 @@
         color: e.color || 0
       };
       if (e.forward == 1) {
-        drop.vx = e.vyx|| (Math.random() * 8);
+        drop.vx = e.vyx || (Math.random() * 8);
       }
       this.drops.push(drop);
     }

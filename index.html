@@ -1,64 +1,90 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>weather</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <style>
-      body {
-        background-color: #fff;
-        margin: 0px;
-        overflow: hidden;
-      }
-      #canv {
-        position: absolute;
-      }
-      .wrap {
-        position: absolute;
-      }
-    </style>
-  </head>
-  <body>
-    <canvas id="canv"></canvas>
-    <div class="wrap"></div>
-    <script>
-      var $process = {}
-    </script>
-    <script src="./drop.js"></script>
-    <script src="./weather.js"></script>
-    <script src="./thunder.js"></script>
-    <script>
-      ;(function() {
-        var watchers = []
-        var canv = document.getElementById('canv')
-        var ctx = canv.getContext('2d')
 
-        var width = window.innerWidth
-        var height = window.innerHeight
+<head>
+  <title>weather</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <style>
+    body {
+      background-color: #fff;
+      margin: 0px;
+      overflow: hidden;
+    }
 
-        var drop = new $process.Drop({ canv: canv, ctx: ctx })
+    #canv {
+      position: absolute;
+    }
 
-        var recycle = function(e) {
-          drop.watcher({ x: e.x, y: e.y, forward: 1 })
-        }
-        var rainy = new $process.Rainy({ recycle: recycle, ctx: ctx })
-        var thunder = new $process.Thunder({ ctx: ctx, width: width, height: height })
+    .wrap {
+      position: absolute;
+    }
+  </style>
+</head>
 
-        watchers.push(drop)
-        watchers.push(rainy)
-        watchers.push(thunder)
+<body>
+  <canvas id="canv0" width="1000" height="200"></canvas>
+  <canvas id="canv1" width="1000" height="200"></canvas>
+  <div class="wrap"></div>
+  <script>
+    var $process = {}
+  </script>
+  <script src="./drop.js"></script>
+  <script src="./weather.js"></script>
+  <script>
+    var watchers = []
+    var canv0 = document.getElementById('canv0')
+    var canv1 = document.getElementById('canv1')
+    var drop0 = new $process.Drop({
+      canv: canv0
+    })
+    var drop1 = new $process.Drop({
+      canv: canv1
+    })
+    var recycle0 = function (e) {
+      drop0.watcher({
+        x: e.x,
+        y: e.y,
+        forward: 1
+      })
+    }
+    var recycle1 = function (e) {
+      drop1.watcher({
+        x: e.x,
+        y: e.y,
+        forward: 1
+      })
+    }
+    var weather = new $process.Weather(canv0, recycle0)
+    var weather1 = new $process.Weather(canv1, recycle1)
+    var rainy = new $process.Rainy(weather)
+    var rainy1 = new $process.Rainy(weather1)
+    watchers.push(drop0)
+    watchers.push(drop1)
+    watchers.push(rainy)
+    watchers.push(rainy1)
+    var raf = function () {
+      weather.ctx.clearRect(0, 0, weather.width, weather.height)
+      weather1.ctx.clearRect(0, 0, weather.width, weather.height)
+      watchers.forEach(function (e) {
+        e.updater()
+      })
+      requestAnimationFrame(raf)
+    }
+    requestAnimationFrame(raf)
 
-        var raf = function() {
-          ctx.clearRect(0, 0, width, height)
-          watchers.forEach(function(e) {
-            e.updater()
-          })
-          requestAnimationFrame(raf)
-        }
-        requestAnimationFrame(raf)
-        window.onmousedown = function(e) {
-          drop.watcher({ x: e.clientX, y: e.clientY })
-        }
-      })()
-    </script>
-  </body>
+    canv0.onmousedown = function (e) {
+      drop0.watcher({
+        x: e.clientX,
+        y: e.clientY
+      })
+    }
+    canv1.onmousedown = function (e) {
+      drop1.watcher({
+        x: e.clientX,
+        y: e.clientY
+      })
+    }
+  </script>
+</body>
+
 </html>

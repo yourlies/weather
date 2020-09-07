@@ -1,10 +1,10 @@
-;(function() {
-  var snowy = function() {
+; (function () {
+  var snowy = function () {
     Nature.camera.clearRect(0, 0, Nature.scene.width, Nature.scene.height)
     for (var i = 0; i < Nature.particles.length; i++) {
       var particle = Nature.particles[i]
       particle.render()
-      particle.update(function(camera) {
+      particle.update(function (camera) {
         camera.fillStyle = 'rgba(255, 255, 255, ' + this.alpha + ')'
         camera.beginPath()
         camera.arc(this.x, this.y, this.r, 0, 2 * Math.PI, false)
@@ -14,60 +14,40 @@
     }
     requestAnimationFrame(snowy)
   }
-})
-
-;(function() {
+});
+; (function () {
   var Nature = {}
-  Nature.scene = document.getElementById('canv')
-  Nature.camera = Nature.scene.getContext('2d')
-  Nature.particles = []
-  Nature.width = window.innerWidth
-  Nature.height = window.innerHeight
-  Nature.entity = Math.floor((Nature.width * Nature.height) / 60000)
-  // Nature.entity = 2;
   Nature.FPS = 60
-  Nature.g = 5
+  Nature.g = 6
   Nature.leans = 0.5
 
   var Tool = {}
-  Tool.random = function(min, max) {
+  Tool.random = function (min, max) {
     return Math.random() * (max - min) + min
   }
 
-  window.requestAnimationFrame = (function() {
+  window.requestAnimationFrame = (function () {
     return (
       window.requestAnimationFrame ||
       window.webkitRequestAnimationFrame ||
       window.mozRequestAnimationFrame ||
       window.oRequestAnimationFrame ||
       window.msRequestAnimationFrame ||
-      function(callBack) {
+      function (callBack) {
         window.setTimeout(callBack, 1000 / Nature.FPS)
       }
     )
   })()
 
-  window.cancelAnimationFrame = (function() {
+  window.cancelAnimationFrame = (function () {
     return window.cancelAnimationFrame || window.clearTimeout
   })()
 
-  var getTwoLineDistance = function(lineA, lineB) {
-    var k = (lineA.y0 - lineA.y1) / (lineA.x0 - lineA.x1)
-    var b = lineA.y0 - k * lineA.x0
-    var d = Math.abs(k * lineB.x0 + -1 * lineB.y0 + b) / Math.sqrt(k * k + 1)
-    var isOverlapped = false
-    if (lineA.x0 < lineB.x0 && lineA.x1 > lineB.x0) {
-      isOverlapped = true
-    }
-    if (lineA.x0 > lineB.x0 && lineB.x1 > lineA.x0) {
-      isOverlapped = true
-    }
-    return { d: d, isOverlapped: isOverlapped }
-  }
-
-  var Particle = function() {
-    this.x = Math.random() * Nature.width
-    this.y = Math.random() * Nature.height
+  var Particle = function (context) {
+    this.width = context.width
+    this.height = context.height
+    this.x = Math.random() * context.width
+    this.y = Math.random() * context.height
     this.moveX = this.x
     this.moveY = this.y
     this.r = Tool.random(2, 4)
@@ -79,37 +59,37 @@
     }
     this.chance = 1
   }
-  Particle.prototype.update = function(updater) {
+  Particle.prototype.update = function (updater) {
     this.updater = updater
     this.updater()
   }
-  Particle.prototype.render = function(recycle) {
+  Particle.prototype.render = function (recycle) {
     this.x += this.velocity.x
     this.y += this.velocity.y
-    if (this.moveY > Nature.scene.height) {
+    if (this.moveY > this.height) {
       if (typeof recycle == 'function') {
         this.recycle = recycle
         this.recycle(this)
       }
     }
-    if (this.moveY > Nature.scene.height || this.x > Nature.scene.width) {
+    if (this.moveY > this.height || this.x > this.width) {
       var chance = Math.random()
       if (chance > this.chance) {
-        this.x = Math.random() * Nature.scene.width
+        this.x = Math.random() * this.width
         this.y = 0
       } else {
         this.x = 0
-        this.y = Math.random() * Nature.scene.height
+        this.y = Math.random() * this.height
       }
       this.status = false
     }
   }
 
-  var RainyAdapt = function(particle) {
-    if (Nature.height * Nature.leans > Nature.height) {
-      particle.chance = (Nature.width / Nature.leans / Nature.height) * 0.5
+  var RainyAdapt = function (particle) {
+    if (particle.height * Nature.leans > particle.height) {
+      particle.chance = (particle.width / Nature.leans / particle.height) * 0.5
     } else {
-      particle.chance = ((Nature.height * Nature.leans) / Nature.width) * 0.5
+      particle.chance = ((particle.height * Nature.leans) / particle.width) * 0.5
     }
     particle.velocity.y = Math.floor(20 + Math.random() * 5)
     particle.g = Nature.g
@@ -118,7 +98,7 @@
     particle.status = 'rainy'
     particle.back = false
   }
-  var RainyLayer = function(particle) {
+  var RainyLayer = function (particle) {
     var rate = Math.random()
     switch (true) {
       case rate > 0.66:
@@ -137,8 +117,7 @@
         break
     }
   }
-
-  var RainyUpdater = function(ctx) {
+  var RainyUpdater = function (ctx) {
     ctx.beginPath()
     ctx.moveTo(this.x, this.y)
     this.velocity.y += (1 / 60) * this.g
@@ -156,58 +135,51 @@
     ctx.closePath()
   }
 
-  var Rainy = function(options) {
+  var Rainy = function (options) {
+    this.canv = options.canv
     this.ctx = options.ctx
     this.recycle = options.recycle
+    this.particles = options.particles
+    this.weather = options
   }
-  Rainy.prototype.updater = function() {
+  Rainy.prototype.updater = function () {
+    if (this.particles.length <= 0) {
+      this.weather.updater()
+    }
     var _this = this
-    for (var i = 0; i < Nature.particles.length; i++) {
-      var particle = Nature.particles[i]
+    for (var i = 0; i < this.particles.length; i++) {
+      var particle = this.particles[i]
       if (particle.status != 'rainy') {
         RainyAdapt(particle)
         RainyLayer(particle)
       }
       particle.render(this.recycle)
-      particle.update(function() {
+      particle.update(function () {
         this.RainyUpdater = RainyUpdater
         this.RainyUpdater(_this.ctx)
       })
     }
   }
 
-  var Thunder = function(options) {
-    this.ctx = options.ctx
+  var Weather = function (canv, recycle) {
+    this.canv = canv
+    this.ctx = this.canv.getContext('2d')
+    this.width = this.canv.width
+    this.height = this.canv.height
+    this.recycle = recycle
+    this.particles = []
+    this.frame = 0
   }
-  Thunder.prototype.updater = function() {}
-
-  var weatherId
-  var frame = 0
-  var weather = function() {
-    frame++
-    if (frame >= 60) {
-      frame = 0
-      var particle = new Particle()
-      Nature.particles.push(particle)
-    }
-    if (Nature.particles.length >= Nature.entity) {
-      cancelAnimationFrame(weatherId)
-    } else {
-      weatherId = requestAnimationFrame(weather)
+  Weather.prototype.updater = function () {
+    this.frame++
+    if (this.frame >= 60) {
+      this.frame = 0
+      var particle = new Particle(this.canv)
+      this.particles.push(particle)
     }
   }
-  weather()
-
-  Nature.scene.width = Nature.width
-  Nature.scene.height = Nature.height
 
   window.$process = window.$process || {}
   $process.Rainy = Rainy
-  $process.Thunder = Thunder
-  // var rainy = new Rainy();
-  // var watcher = function () {
-  //   rainy.watcher();
-  //   requestAnimationFrame(watcher);
-  // };
-  // requestAnimationFrame(watcher);
+  $process.Weather = Weather
 })()
