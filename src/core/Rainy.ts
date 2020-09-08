@@ -1,12 +1,12 @@
 interface weather {
-  canv: Element;
-  ctx: Element;
+  canv: HTMLCanvasElement;
+  ctx: CanvasRenderingContext2D;
   recycle: Function;
   particles: Array<any>;
 }
 class Rainy {
-  private canv: Element;
-  private ctx: Element;
+  private canv: HTMLCanvasElement;
+  private ctx: CanvasRenderingContext2D;
   private recycle: Function;
   private particles: Array<any>;
   private weather: weather;
