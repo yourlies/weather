@@ -8,6 +8,8 @@
     this.canv = this.options.canv;
     this.ctx = this.options.canv.getContext('2d');
     this.drops = [];
+    this.oX = this.canv.offsetLeft;
+    this.oY = this.canv.offsetTop;
   };
   Drop.prototype.update = function () {
     var _this = this;
@@ -38,12 +40,13 @@
       _this.ctx.stroke();
     });
   }
-  Drop.prototype.create = function (e) {
+  Drop.prototype.create = function (e, ori) {
     var entries = Math.floor(Math.random() * 2 + 4);
     for (var i = 0; i < entries; i++) {
       var drop = {
         die: false,
-        posx: e.x, posy: e.y,
+        posx: ori === 'click' ? e.x - this.oX : e.x,
+        posy: ori === 'click' ? e.y - this.oY : e.y,
         vx: e.vx || (Math.random() - 0.5) * 8,
         vy: e.vy || (Math.random() * (-6) - 3),
         radius: e.radius || Math.random() * 1 + .5,
@@ -56,8 +59,8 @@
     }
   }
 
-  Drop.prototype.watcher = function (e) {
-    this.create(e);
+  Drop.prototype.watcher = function (e, ori) {
+    this.create(e, ori);
   }
   Drop.prototype.updater = function (e) {
     this.update();

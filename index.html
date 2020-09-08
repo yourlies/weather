@@ -22,8 +22,14 @@
 </head>
 
 <body>
-  <canvas id="canv0" width="1000" height="200"></canvas>
-  <canvas id="canv1" width="1000" height="200"></canvas>
+  <div>
+    <div>
+      <canvas id="canv0" width="1000" height="300"></canvas>
+    </div>
+    <div>
+      <canvas id="canv1" width="1000" height="300"></canvas>
+    </div>
+  </div>
   <div class="wrap"></div>
   <script>
     var $process = {}
@@ -32,58 +38,45 @@
   <script src="./weather.js"></script>
   <script>
     var watchers = []
-    var canv0 = document.getElementById('canv0')
-    var canv1 = document.getElementById('canv1')
-    var drop0 = new $process.Drop({
-      canv: canv0
-    })
-    var drop1 = new $process.Drop({
-      canv: canv1
-    })
-    var recycle0 = function (e) {
-      drop0.watcher({
-        x: e.x,
-        y: e.y,
-        forward: 1
+    var package = function (id) {
+      var canv = document.getElementById(id)
+      var drop = new $process.Drop({
+        canv: canv
       })
-    }
-    var recycle1 = function (e) {
-      drop1.watcher({
-        x: e.x,
-        y: e.y,
-        forward: 1
+      var recycle = function (e) {
+        drop.watcher({
+          x: e.x,
+          y: e.y,
+          forward: 1
+        })
+      }
+      var weather = new $process.Weather(canv, recycle)
+      var rainy = new $process.Rainy(weather)
+      watchers.push(drop)
+      watchers.push(rainy)
+      watchers.unshift({
+        updater: function () {
+          weather.ctx.clearRect(0, 0, weather.width, weather.height)
+        }
       })
+
+      return {
+        drop: drop,
+        weather: weather,
+        raint: rainy,
+        canv: canv
+      }
     }
-    var weather = new $process.Weather(canv0, recycle0)
-    var weather1 = new $process.Weather(canv1, recycle1)
-    var rainy = new $process.Rainy(weather)
-    var rainy1 = new $process.Rainy(weather1)
-    watchers.push(drop0)
-    watchers.push(drop1)
-    watchers.push(rainy)
-    watchers.push(rainy1)
+    package('canv0')
+    package('canv1')
+
     var raf = function () {
-      weather.ctx.clearRect(0, 0, weather.width, weather.height)
-      weather1.ctx.clearRect(0, 0, weather.width, weather.height)
       watchers.forEach(function (e) {
         e.updater()
       })
       requestAnimationFrame(raf)
     }
     requestAnimationFrame(raf)
-
-    canv0.onmousedown = function (e) {
-      drop0.watcher({
-        x: e.clientX,
-        y: e.clientY
-      })
-    }
-    canv1.onmousedown = function (e) {
-      drop1.watcher({
-        x: e.clientX,
-        y: e.clientY
-      })
-    }
   </script>
 </body>
 
