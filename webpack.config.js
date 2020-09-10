@@ -10,5 +10,8 @@ module.exports = {
     rules: [
       { test: /\.tsx?$/, loader: ["babel-loader", "ts-loader"] }
     ]
-  }
+  },
+  resolve: {
+    extensions: ['.ts', '.tsx', '*']
+  },
 }

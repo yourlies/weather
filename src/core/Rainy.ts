@@ -82,3 +82,5 @@ class Rainy {
     this.ctx.closePath();
   }
 }
+
+export default Rainy;

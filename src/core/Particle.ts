@@ -21,7 +21,7 @@ class Particle implements particle {
   public back: boolean;
   public increment: number;
 
-  public constructor(context: particle) {
+  public constructor(context: particleContext) {
     this.width = context.width;
     this.height = context.height;
     this.leans = context.leans;
