@@ -11,13 +11,13 @@ class Weather {
     this.canv = context.canv;
     this.ctx = context.ctx;
     this.particles = [];
-    this.update = context.updater;
+    this.update = context.update;
     this.particleContext = context.particleContext;
     this.frame = 0;
   }
   public updater() {
     if (this.frame >= 60) {
-      this.update(this.particleContext);
+      this.update();
       this.frame = 0;
     }
     this.frame++;

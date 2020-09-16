@@ -27,6 +27,7 @@ class Particle implements particle {
     this.leans = context.leans;
     this.gravity = context.gravity;
     this.g = context.gravity;
+    this.velocity = { x: 0, y: 0 };
     this.increment = 0;
     this.back = false;
     this.x = Math.random() * context.width;

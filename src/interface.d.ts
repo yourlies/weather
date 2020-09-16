@@ -3,6 +3,7 @@ interface weather {
   ctx: CanvasRenderingContext2D;
   recycle: Function;
   particles: Array<particle>;
+  update: Function;
   updater: Function;
   particleContext: particleContext;
 }
