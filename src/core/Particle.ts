@@ -13,7 +13,6 @@ class Particle implements particle {
   public status: string;
   public velocity: velocity;
   public chance: number;
-  public updater: Function;
   public recycle: Function;
   public leans: number;
   public g: number;
@@ -42,12 +41,7 @@ class Particle implements particle {
       y: random(0.75, 1.5),
     };
     this.chance = 1;
-    this.updater = context.updater;
     this.recycle = context.recycle || function () {};
-  }
-
-  public update(): void {
-    this.updater();
   }
 
   public render(): void {

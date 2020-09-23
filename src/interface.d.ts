@@ -14,11 +14,9 @@ interface velocity {
 interface particle {
   width: number;
   height: number;
-  updater: Function;
   recycle?: Function;
   status: string;
   render: Function;
-  update: Function;
   chance: number;
   velocity: velocity;
   leans: number;

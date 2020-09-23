@@ -26,9 +26,7 @@ class Rainy {
         this.RainyLayer(particle);
       }
       particle.render(this.recycle);
-      particle.update(() => {
-        this.RainyUpdater(particle);
-      });
+      this.RainyUpdater(particle);
     }
   }
 
