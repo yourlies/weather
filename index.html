@@ -1,45 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
 
-  <body>
-    <canvas id="canv"></canvas>
-    <script src="./dist/build.js"></script>
-    <script>
-      const canv = document.getElementById('canv');
-      const ctx = canv.getContext('2d');
-      const particleContext = {
-        width: canv.width,
-        height: canv.height,
-        leans: 0.5,
-        gravity: 6,
-      };
-      const update = function () {
-        const particle = new $process.Particle(this.particleContext);
-        this.particles.push(particle);
-      };
-      const weather = new $process.Weather({
-        canv,
-        ctx,
-        particleContext,
-        update,
-      });
-      const rainy = new $process.Rainy(weather);
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
 
-      const updater = function () {
-        weather.updater();
-        rainy.updater();
-        if (weather.particles.length < 3) {
-          requestAnimationFrame(updater);
-        } else {
-          console.log(weather.particles);
-        }
-      };
+<body>
+  <canvas id="canv" width="500" height="500"></canvas>
+  <script src="./dist/build.js"></script>
+  <script>
+    const canv = document.getElementById('canv');
+    const ctx = canv.getContext('2d');
+    const particleContext = {
+      width: canv.width,
+      height: canv.height,
+      leans: 0.5,
+      gravity: 6,
+    };
+    const update = function () {
+      const particle = new $process.Particle(this.particleContext);
+      this.particles.push(particle);
+    };
+    const weather = new $process.Weather({
+      canv,
+      ctx,
+      particleContext,
+      update,
+    });
+    const rainy = new $process.Rainy(weather);
+
+    const updater = function () {
+      ctx.clearRect(0, 0, canv.width, canv.height)
+      rainy.updater();
       requestAnimationFrame(updater);
-    </script>
-  </body>
+      if (weather.particles.length < 3) {
+        weather.updater();
+      }
+    };
+    requestAnimationFrame(updater);
+  </script>
+</body>
+
 </html>
