@@ -1,5 +1,5 @@
 /// <reference path="../interface.d.ts" />
-import random from '../lib/random';
+import random from '../lib/random.js';
 
 class Particle implements particle {
   public width: number;
@@ -41,7 +41,7 @@ class Particle implements particle {
       y: random(0.75, 1.5),
     };
     this.chance = 1;
-    this.recycle = context.recycle || function () {};
+    this.recycle = context.recycle || function () { };
   }
 
   public render(): void {
