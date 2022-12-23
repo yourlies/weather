@@ -1,6 +1,6 @@
-import Weather from './core/Weather.js';
-import Rainy from './core/Rainy.js';
-import Particle from './core/Particle.js';
+import Weather from './core/Weather';
+import Rainy from './core/Rainy';
+import Particle from './core/Particle';
 
 declare global {
   interface Window {

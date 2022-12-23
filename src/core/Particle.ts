@@ -1,5 +1,5 @@
 /// <reference path="../interface.d.ts" />
-import random from '../lib/random.js';
+import random from '../lib/random';
 
 class Particle implements particle {
   public width: number;
