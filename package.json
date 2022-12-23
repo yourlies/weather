@@ -8,5 +8,7 @@
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"
   },
-  "dependencies": {}
+  "dependencies": {
+    "tsify": "^5.0.4"
+  }
 }
