@@ -19,14 +19,14 @@ class Weather {
   }
   public updater() {
     if (this.frame >= 60 && this.sysFrame == 0) {
-      this.sysFrame = 1000 * 30 / (new Date().getTime() - this.lastTimestamp);
+      this.sysFrame = Math.floor(1000 * 30 / (new Date().getTime() - this.lastTimestamp));
     }
     if (this.sysFrame > 0 && this.frame == this.sysFrame) {
       this.update();
       this.frame = 0;
     }
     if (this.frame == 0) {
-      this.lastTimestamp = Math.floor(new Date().getTime())
+      this.lastTimestamp = new Date().getTime()
     }
     this.frame++;
   }

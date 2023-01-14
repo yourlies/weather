@@ -156,7 +156,7 @@ var Weather = /** @class */ (function () {
             this.frame = 0;
         }
         if (this.frame == 0) {
-            this.lastTimestamp = Math.floor(new Date().getTime());
+            this.lastTimestamp = new Date().getTime();
         }
         this.frame++;
     };
