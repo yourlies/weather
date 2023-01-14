@@ -44,11 +44,12 @@ class Particle implements particle {
     this.recycle = context.recycle || function () { };
   }
 
-  public render(): void {
+  public render(recycle: Function): void {
     this.x += this.velocity.x;
     this.y += this.velocity.y;
+    const callback = recycle || this.recycle
     if (this.moveY > this.height) {
-      this.recycle(this);
+      callback(this);
     }
     if (this.moveY > this.height || this.x > this.width) {
       const chance = Math.random();

@@ -7,6 +7,7 @@ class Weather {
   public update: Function;
   public particleContext: particleContext;
   public frame: number;
+  public recycle: Function;
   private lastTimestamp: number = 0;
   public sysFrame: number = 0;
   constructor(context: weather) {
@@ -16,6 +17,7 @@ class Weather {
     this.update = context.update;
     this.particleContext = context.particleContext;
     this.frame = 0;
+    this.recycle = context.recycle || function () { };
   }
   public updater() {
     if (this.frame >= 60 && this.sysFrame == 0) {

@@ -11,6 +11,11 @@ const test = function () {
     leans: 0.5,
     gravity: 3,
   };
+  const drop = new $process.Drop({ canv: canv, ctx: ctx });
+
+  const recycle = function (e) {
+    drop.watcher({ x: e.x, y: e.y, forward: 1 });
+  };
   const update = function () {
     const particle = new $process.Particle(this.particleContext);
     this.particles.push(particle);
@@ -20,10 +25,10 @@ const test = function () {
     ctx,
     particleContext,
     update,
+    recycle,
   });
   const rainy = new $process.Rainy(weather);
   const entity = Math.floor((canv.clientWidth * canv.clientHeight) / 120000);
-  console.log(entity);
   const updater = function () {
     ctx.clearRect(0, 0, canv.clientWidth, canv.clientHeight);
     rainy.updater();

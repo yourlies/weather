@@ -30,11 +30,12 @@ var Particle = /** @class */ (function () {
         this.chance = 1;
         this.recycle = context.recycle || function () { };
     }
-    Particle.prototype.render = function () {
+    Particle.prototype.render = function (recycle) {
         this.x += this.velocity.x;
         this.y += this.velocity.y;
+        var callback = recycle || this.recycle;
         if (this.moveY > this.height) {
-            this.recycle(this);
+            callback(this);
         }
         if (this.moveY > this.height || this.x > this.width) {
             var chance = Math.random();
@@ -147,6 +148,7 @@ var Weather = /** @class */ (function () {
         this.update = context.update;
         this.particleContext = context.particleContext;
         this.frame = 0;
+        this.recycle = context.recycle || function () { };
     }
     Weather.prototype.updater = function () {
         if (this.frame >= 60 && this.sysFrame == 0) {
