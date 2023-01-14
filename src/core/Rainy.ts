@@ -65,7 +65,7 @@ class Rainy {
   public RainyUpdater(particle: particle) {
     this.ctx.beginPath();
     this.ctx.moveTo(particle.x, particle.y);
-    particle.velocity.y += (1 / 60) * particle.g;
+    particle.velocity.y += (1 / (this.weather.sysFrame || 60)) * particle.g;
     particle.velocity.x = particle.velocity.y * particle.leans;
     var t = Math.atan(particle.velocity.y / particle.velocity.x);
     var x = Math.cos(t) * particle.increment;

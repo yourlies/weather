@@ -6,6 +6,7 @@ interface weather {
   update: Function;
   updater: Function;
   particleContext: particleContext;
+  sysFrame: number;
 }
 interface velocity {
   x: number;
