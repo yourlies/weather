@@ -1,5 +1,9 @@
 const test = function () {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
   const canv = document.getElementById("canv");
+  canv.setAttribute("width", width);
+  canv.setAttribute("height", height);
   const ctx = canv.getContext("2d");
   const particleContext = {
     width: canv.clientWidth,
