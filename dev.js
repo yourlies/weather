@@ -7,4 +7,4 @@ setInterval(() => {
   execute(
     "browserify src/index.ts -w -p [ tsify --noImplicitAny ] > bundle.js"
   );
-}, 10000);
+}, 5000);
