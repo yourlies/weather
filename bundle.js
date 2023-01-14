@@ -99,11 +99,13 @@ var Rainy = /** @class */ (function () {
         switch (true) {
             case rate > 0.66:
                 particle.increment = 80;
+                particle.velocity.y = particle.velocity.y * 2;
                 break;
             case rate > 0.33:
                 particle.increment = 50;
                 particle.velocity.y = particle.velocity.y * 0.6;
                 particle.g = particle.gravity * 0.4;
+                particle.alpha = particle.alpha * 0.6;
                 break;
             default:
                 particle.increment = 40;
