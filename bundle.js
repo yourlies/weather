@@ -86,8 +86,8 @@ var Rainy = /** @class */ (function () {
         else {
             particle.chance = ((particle.height * particle.leans) / particle.width) * 0.5;
         }
-        particle.velocity.y = Math.floor(20 + Math.random() * 5);
-        particle.g = particle.g;
+        var vy = 12 + Math.random() * 5;
+        particle.velocity.y = Math.floor(vy * 60 / this.weather.sysFrame);
         particle.velocity.x = particle.velocity.y * particle.leans;
         particle.alpha = 0.1;
         particle.status = 'rainy';
@@ -115,7 +115,8 @@ var Rainy = /** @class */ (function () {
     Rainy.prototype.RainyUpdater = function (particle) {
         this.ctx.beginPath();
         this.ctx.moveTo(particle.x, particle.y);
-        particle.velocity.y += (1 / (this.weather.sysFrame || 60)) * particle.g;
+        var frame = this.weather.sysFrame || 60;
+        particle.velocity.y += (1 / frame) * particle.g;
         particle.velocity.x = particle.velocity.y * particle.leans;
         var t = Math.atan(particle.velocity.y / particle.velocity.x);
         var x = Math.cos(t) * particle.increment;
@@ -123,7 +124,7 @@ var Rainy = /** @class */ (function () {
         this.ctx.lineTo(particle.x + x, particle.y + y);
         particle.moveX = particle.x + x;
         particle.moveY = particle.y + y;
-        this.ctx.lineWidth = 4;
+        this.ctx.lineWidth = 1;
         this.ctx.strokeStyle = 'rgba(0, 0, 0, ' + particle.alpha + ')';
         this.ctx.stroke();
         this.ctx.closePath();
@@ -151,7 +152,7 @@ var Weather = /** @class */ (function () {
         if (this.frame >= 60 && this.sysFrame == 0) {
             this.sysFrame = Math.floor(1000 * 30 / (new Date().getTime() - this.lastTimestamp));
         }
-        if (this.sysFrame > 0 && this.frame == this.sysFrame) {
+        if (this.sysFrame > 0 && this.frame >= Math.floor(this.sysFrame) / 2) {
             this.update();
             this.frame = 0;
         }

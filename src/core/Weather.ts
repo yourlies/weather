@@ -21,7 +21,7 @@ class Weather {
     if (this.frame >= 60 && this.sysFrame == 0) {
       this.sysFrame = Math.floor(1000 * 30 / (new Date().getTime() - this.lastTimestamp));
     }
-    if (this.sysFrame > 0 && this.frame == this.sysFrame) {
+    if (this.sysFrame > 0 && this.frame >= Math.floor(this.sysFrame) / 2) {
       this.update();
       this.frame = 0;
     }

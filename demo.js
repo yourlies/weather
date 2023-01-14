@@ -5,7 +5,7 @@ const test = function () {
     width: canv.clientWidth,
     height: canv.clientHeight,
     leans: 0.5,
-    gravity: 6,
+    gravity: 3,
   };
   const update = function () {
     const particle = new $process.Particle(this.particleContext);
