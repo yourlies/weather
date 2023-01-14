@@ -9,13 +9,13 @@
     this.ctx = this.options.ctx;
     this.drops = [];
   };
-  Drop.prototype.update = function () {
+  Drop.prototype.update = function (adapt) {
     var _this = this;
     if (this.drops.length > 0) {
       this.drops.forEach(function (drop) {
-        drop.posx = drop.posx + drop.vx;
+        drop.posx = drop.posx + drop.vx * adapt;
         drop.vy = drop.vy + _this.gravity;
-        drop.posy = drop.posy + drop.vy;
+        drop.posy = drop.posy + drop.vy * adapt;
         drop.color = drop.color + 6;
         if (drop.posy > _this.canv.clientHeight) {
           drop.die = true;
@@ -59,10 +59,9 @@
 
   Drop.prototype.watcher = function (e) {
     this.create(e);
-    this.updater();
   };
-  Drop.prototype.updater = function (e) {
-    this.update();
+  Drop.prototype.updater = function (sysFrame) {
+    this.update(50 / sysFrame);
     this.render();
   };
 

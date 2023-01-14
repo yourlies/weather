@@ -29,13 +29,26 @@ const test = function () {
   });
   const rainy = new $process.Rainy(weather);
   const entity = Math.floor((canv.clientWidth * canv.clientHeight) / 120000);
+
+  let frame = 0;
+  let sysFrame = 0;
+  const lastTimestamp = new Date().getTime();
   const updater = function () {
+    if (frame <= 60) {
+      frame++;
+    }
+    if (frame == 60) {
+      sysFrame = Math.floor(
+        (1000 * 30) / (new Date().getTime() - lastTimestamp)
+      );
+    }
     ctx.clearRect(0, 0, canv.clientWidth, canv.clientHeight);
     rainy.updater();
     requestAnimationFrame(updater);
     if (weather.particles.length < entity) {
       weather.updater();
     }
+    drop.updater(sysFrame);
   };
   requestAnimationFrame(updater);
 };
