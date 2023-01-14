@@ -36,7 +36,7 @@ class Rainy {
     } else {
       particle.chance = ((particle.height * particle.leans) / particle.width) * 0.5;
     }
-    const vy = 12 + Math.random() * 5
+    const vy = 12 + Math.random() * 2
     particle.velocity.y = Math.floor(vy * 60 / this.weather.sysFrame);
     particle.velocity.x = particle.velocity.y * particle.leans;
     particle.alpha = 0.1;
@@ -47,18 +47,18 @@ class Rainy {
     var rate = Math.random();
     switch (true) {
       case rate > 0.66:
-        particle.increment = 55;
+        particle.increment = 80;
         break;
       case rate > 0.33:
         particle.increment = 50;
-        particle.velocity.y = particle.velocity.y * 0.8;
-        particle.g = particle.gravity * 0.8;
+        particle.velocity.y = particle.velocity.y * 0.6;
+        particle.g = particle.gravity * 0.4;
         break;
       default:
         particle.increment = 40;
-        particle.velocity.y = particle.velocity.y * 0.6;
-        particle.g = particle.gravity * 0.6;
-        particle.alpha = particle.alpha * 0.6;
+        particle.velocity.y = particle.velocity.y * 0.4;
+        particle.g = particle.gravity * 0.4;
+        particle.alpha = particle.alpha * 0.2;
         break;
     }
   }

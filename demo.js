@@ -22,8 +22,8 @@ const test = function () {
     update,
   });
   const rainy = new $process.Rainy(weather);
-  const entity = Math.floor((canv.clientWidth * canv.clientHeight) / 18000);
-
+  const entity = Math.floor((canv.clientWidth * canv.clientHeight) / 120000);
+  console.log(entity);
   const updater = function () {
     ctx.clearRect(0, 0, canv.clientWidth, canv.clientHeight);
     rainy.updater();
