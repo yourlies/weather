@@ -21,7 +21,7 @@ const test = function () {
   const entity = Math.floor((canv.clientWidth * canv.clientHeight) / 18000);
 
   const updater = function () {
-    ctx.clearRect(0, 0, canv.width, canv.height);
+    ctx.clearRect(0, 0, canv.clientWidth, canv.clientHeight);
     rainy.updater();
     requestAnimationFrame(updater);
     if (weather.particles.length < entity) {

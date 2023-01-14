@@ -75,7 +75,7 @@ class Rainy {
 
     particle.moveX = particle.x + x;
     particle.moveY = particle.y + y;
-    this.ctx.lineWidth = 1;
+    this.ctx.lineWidth = 0.5;
     this.ctx.strokeStyle = 'rgba(0, 0, 0, ' + particle.alpha + ')';
     this.ctx.stroke();
     this.ctx.closePath();
