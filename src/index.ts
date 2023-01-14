@@ -12,5 +12,3 @@ window.$process = window.$process || {};
 window.$process.Weather = Weather;
 window.$process.Rainy = Rainy;
 window.$process.Particle = Particle;
-
-console.log(window.$process)
