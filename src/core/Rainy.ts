@@ -1,7 +1,7 @@
 /// <reference path="../interface.d.ts" />
 
 class Rainy {
-  private canv: HTMLCanvasElement;
+  canv: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private recycle: Function;
   private particles: Array<particle>;

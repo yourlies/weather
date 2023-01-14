@@ -1,9 +1,9 @@
 const test = function () {
-  const canv = document.getElementById('canv');
-  const ctx = canv.getContext('2d');
+  const canv = document.getElementById("canv");
+  const ctx = canv.getContext("2d");
   const particleContext = {
-    width: canv.width,
-    height: canv.height,
+    width: canv.clientWidth,
+    height: canv.clientHeight,
     leans: 0.5,
     gravity: 6,
   };
@@ -20,13 +20,13 @@ const test = function () {
   const rainy = new $process.Rainy(weather);
 
   const updater = function () {
-    ctx.clearRect(0, 0, canv.width, canv.height)
+    ctx.clearRect(0, 0, canv.width, canv.height);
     rainy.updater();
     requestAnimationFrame(updater);
-    if (weather.particles.length < 3) {
+    if (weather.particles.length < 15) {
       weather.updater();
     }
   };
   requestAnimationFrame(updater);
-}
-test()
+};
+test();
