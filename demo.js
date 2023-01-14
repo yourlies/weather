@@ -18,8 +18,7 @@ const test = function () {
     update,
   });
   const rainy = new $process.Rainy(weather);
-  const entity = Math.floor((canv.clientWidth * canv.clientHeight) / 1000);
-
+  const entity = Math.floor((canv.clientWidth * canv.clientHeight) / 18000);
   setInterval(() => {
     console.log(weather);
   }, 5000);
