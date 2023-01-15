@@ -50,6 +50,11 @@ const test = function () {
     }
     drop.updater(sysFrame);
   };
+
+  window.onmousedown = (e) => {
+    drop.watcher({ x: e.x, y: e.y, forward: 1 });
+  };
+
   requestAnimationFrame(updater);
 };
 test();

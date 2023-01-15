@@ -20,6 +20,9 @@
         if (drop.posy > _this.canv.clientHeight) {
           drop.die = true;
         }
+        if (drop.color > 240) {
+          drop.die = true;
+        }
       });
     }
     for (var i = this.drops.length - 1; i >= 0; i--) {
